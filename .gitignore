@@ -1,0 +1,10 @@
+.idea/
+.vscode/
+__pycache__/
+build/
+dist/
+*.png
+!preview/client.png
+!preview/server.png
+*.csv
+*.spec
