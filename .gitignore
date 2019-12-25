@@ -6,5 +6,6 @@ dist/
 *.png
 !preview/client.png
 !preview/server.png
+!server/blank.png
 *.csv
 *.spec
