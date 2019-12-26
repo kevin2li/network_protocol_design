@@ -6,7 +6,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import os
 import threading
-
+import re
 from server.server_qt import Ui_MainWindow
 
 
@@ -18,6 +18,7 @@ class Server_Win(QMainWindow, Ui_MainWindow):
         self.PORT = 8023
         self.FLAG = True
         self.currentDevice = None
+        self.control_msg = None
         self.updateImage("blank.png")
         self.show()
 
@@ -26,10 +27,12 @@ class Server_Win(QMainWindow, Ui_MainWindow):
         self.img_label.show()
 
     def control(self):
-        pass
-
-    def addDevice(self):
-        self.listWidget.addItem("new added")
+        if self.pushButton_15.text() == '暂停':
+            self.pushButton_15.setText("继续")
+            self.control_msg = "pause"
+        elif self.pushButton_15.text() == '继续':
+            self.pushButton_15.setText("暂停")
+            self.control_msg = "resume"
 
     def changeDevice(self):
         item = self.listWidget.currentItem()
@@ -65,43 +68,54 @@ class Server_Win(QMainWindow, Ui_MainWindow):
                     self.listWidget.setCurrentRow(0)
                 else:
                     self.listWidget.addItem(str(addr))
-                threading.Thread(target=self.handleClientRequest, args=(conn,addr)).start()
+                threading.Thread(target=self.handleClientRequest, args=(conn, addr)).start()
+                threading.Thread(target=self.send, args=(conn, addr)).start()
             self.listWidget.clear()
 
     def handleClientRequest(self, conn, addr):
         while self.FLAG:
             data = conn.recv(1024)
             if len(data) > 0:
+                data = data.decode("utf-8")
                 print(data)
-                message = json.loads(data.decode('utf-8'))
-                if self.currentDevice == str(addr):
-                    self.label_6.setText(f"{message['power']:.2f}w")
-                    self.label_2.setText(str(message['sn']))
-                filename = f"{message['sn']}.csv"
-                if not os.path.exists(filename):
-                    df = pd.DataFrame(columns=['id', 'type', 'time', 'power', 'sn', 'state'])
-                    df.to_csv(f"{message['sn']}.csv")
-                df = pd.read_csv(filename, index_col=0)
-                df = df.append(pd.Series(
-                    [message['id'], message['type'], message['time'], message['power'], message['sn'],
-                     message['state']], index=df.columns), ignore_index=True)
+                data = re.split("(?<=})", data)[:-1]
+                for item in data:
+                    message = json.loads(item)
+                    if self.currentDevice == str(addr):
+                        self.label_6.setText(f"{message['power']:.2f}w")
+                        self.label_2.setText(str(message['sn']))
+                    filename = f"{message['sn']}.csv"
+                    if not os.path.exists(filename):
+                        df = pd.DataFrame(columns=['id', 'type', 'time', 'power', 'sn', 'state'])
+                        df.to_csv(f"{message['sn']}.csv")
+                    df = pd.read_csv(filename, index_col=0)
+                    df = df.append(pd.Series(
+                        [message['id'], message['type'], message['time'], message['power'], message['sn'],
+                         message['state']], index=df.columns), ignore_index=True)
 
-                csv_path = f"{message['sn']}.csv"
-                df.to_csv(csv_path)
-                self.plot(csv_path)
-                if self.currentDevice == str(addr):
-                    self.updateImage(f"{message['sn']}.png")
+                    csv_path = f"{message['sn']}.csv"
+                    df.to_csv(csv_path)
+                    self.plot(csv_path)
+                    if self.currentDevice == str(addr):
+                        self.updateImage(f"{message['sn']}.png")
             else:
                 conn.close()
                 break
         conn.close()
+
+    def send(self, conn_socket, addr):
+        while True:
+            if self.currentDevice == str(addr):
+                if self.control_msg:
+                    conn_socket.sendall(self.control_msg.encode('utf-8'))
+                    self.control_msg = None
 
     def plot(self, csv_path):
         df = pd.read_csv(csv_path, index_col=0)
         y = df['power'][-30:]
         plt.plot(y, "b-")
         plt.ylabel("power")
-        plt.ylim(800, 1200)
+        plt.ylim(900, 1100)
         plt.savefig(f"{df.sn.iloc[0]}.png")
         plt.close()
 

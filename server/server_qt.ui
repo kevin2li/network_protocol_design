@@ -29,23 +29,10 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="pushButton_13">
-     <property name="geometry">
-      <rect>
-       <x>610</x>
-       <y>530</y>
-       <width>101</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>暂停</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="pushButton_14">
      <property name="geometry">
       <rect>
-       <x>710</x>
+       <x>620</x>
        <y>530</y>
        <width>101</width>
        <height>41</height>
@@ -65,20 +52,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>停止</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_16">
-     <property name="geometry">
-      <rect>
-       <x>420</x>
-       <y>530</y>
-       <width>101</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>打开</string>
+      <string>暂停</string>
      </property>
     </widget>
     <widget class="QLabel" name="img_label">
@@ -305,38 +279,6 @@
     <hint type="destinationlabel">
      <x>412</x>
      <y>609</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_13</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>control()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>456</x>
-     <y>626</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>516</x>
-     <y>609</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_16</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>control()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>244</x>
-     <y>626</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>297</x>
-     <y>608</y>
     </hint>
    </hints>
   </connection>

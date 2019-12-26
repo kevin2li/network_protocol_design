@@ -9,3 +9,4 @@ dist/
 !server/blank.png
 *.csv
 *.spec
+test.ipynb
