@@ -10,6 +10,7 @@ from datetime import datetime
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
 
 from client.client_qt import Ui_Form
+from protocol import HEMSProtocol
 
 
 class Client_Win(QWidget, Ui_Form):
@@ -21,6 +22,7 @@ class Client_Win(QWidget, Ui_Form):
         self.addr = '127.0.0.1'
         self.port = 8023
         self.device = 'ABC'
+        self.state = "off"
         self.interval = 1
         self.show()
 
@@ -36,10 +38,11 @@ class Client_Win(QWidget, Ui_Form):
                         "power": 1000 + random.random()*10,
                         "id": id,
                         "sn": device,
-                        "state": "on"
+                        "state": self.state
                     }
+                    packet = HEMSProtocol(**message)
                     # print(json.dumps(message))
-                    conn_socket.sendall(json.dumps(message).encode('utf-8'))
+                    conn_socket.sendall(packet.serilize())
                     time.sleep(interval)
                 elif self.FLAG == -1:
                     self.FLAG = 0
@@ -54,15 +57,16 @@ class Client_Win(QWidget, Ui_Form):
         try:
             while True:
                 data = conn_socket.recv(1024)
-                data = data.decode('utf-8')
+                data = HEMSProtocol.unserilize(data)
                 print(data)
-                if data == 'pause':
+                command = data['body']['method']
+                if command == 'pause':
                     self.btn.setText("启动")
                     self.FLAG = 0
-                elif data == 'resume':
+                elif command == 'resume':
                     self.btn.setText("停止")
                     self.FLAG = 1
-                elif data == 'stop':
+                elif command == 'stop':
                     self.btn.setText("启动")
                     self.FLAG = -1
         except ConnectionAbortedError:
@@ -70,6 +74,7 @@ class Client_Win(QWidget, Ui_Form):
 
     def openClient(self):
         if self.btn.text() == "启动":
+            self.state = 'on'
             if self.FLAG == 0:
                 try:
                     self.addr = self.lineEdit.text()
@@ -95,6 +100,7 @@ class Client_Win(QWidget, Ui_Form):
                 self.FLAG = -1
                 self.btn.setText("停止")
         elif self.btn.text() == "停止":
+            self.state = 'off'
             self.FLAG = -1
             self.btn.setText("启动")
 
