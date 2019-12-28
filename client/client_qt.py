@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'client_qt.ui'
+# Form implementation generated from reading ui file 'client\client_qt.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(520, 232)
+        Form.resize(518, 276)
         self.lineEdit_4 = QtWidgets.QLineEdit(Form)
         self.lineEdit_4.setGeometry(QtCore.QRect(160, 170, 171, 31))
         self.lineEdit_4.setObjectName("lineEdit_4")
@@ -68,6 +68,30 @@ class Ui_Form(object):
         self.btn = QtWidgets.QPushButton(Form)
         self.btn.setGeometry(QtCore.QRect(390, 30, 101, 41))
         self.btn.setObjectName("btn")
+        self.label_6 = QtWidgets.QLabel(Form)
+        self.label_6.setGeometry(QtCore.QRect(20, 220, 141, 31))
+        font = QtGui.QFont()
+        font.setFamily("Arial Black")
+        font.setPointSize(12)
+        self.label_6.setFont(font)
+        self.label_6.setTextFormat(QtCore.Qt.AutoText)
+        self.label_6.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_6.setObjectName("label_6")
+        self.lineEdit_5 = QtWidgets.QLineEdit(Form)
+        self.lineEdit_5.setGeometry(QtCore.QRect(160, 220, 41, 31))
+        self.lineEdit_5.setObjectName("lineEdit_5")
+        self.label_7 = QtWidgets.QLabel(Form)
+        self.label_7.setGeometry(QtCore.QRect(200, 220, 31, 31))
+        font = QtGui.QFont()
+        font.setFamily("Arial Black")
+        font.setPointSize(12)
+        self.label_7.setFont(font)
+        self.label_7.setTextFormat(QtCore.Qt.AutoText)
+        self.label_7.setAlignment(QtCore.Qt.AlignCenter)
+        self.label_7.setObjectName("label_7")
+        self.lineEdit_6 = QtWidgets.QLineEdit(Form)
+        self.lineEdit_6.setGeometry(QtCore.QRect(230, 220, 41, 31))
+        self.lineEdit_6.setObjectName("lineEdit_6")
 
         self.retranslateUi(Form)
         self.btn.clicked.connect(Form.openClient)
@@ -86,3 +110,7 @@ class Ui_Form(object):
         self.label.setText(_translate("Form", "服务器地址："))
         self.label_3.setText(_translate("Form", "发送间隔："))
         self.btn.setText(_translate("Form", "启动"))
+        self.label_6.setText(_translate("Form", "功率范围："))
+        self.lineEdit_5.setText(_translate("Form", "200"))
+        self.label_7.setText(_translate("Form", "至"))
+        self.lineEdit_6.setText(_translate("Form", "210"))

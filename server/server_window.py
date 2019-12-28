@@ -1,14 +1,10 @@
-import json
-import pickle
 import socket
 import sys
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QLineEdit
 import pandas as pd
 from matplotlib import pyplot as plt
 import os
 import threading
-import re
-
 from protocol import HEMSProtocol
 from server.server_qt import Ui_MainWindow
 
@@ -32,15 +28,27 @@ class Server_Win(QMainWindow, Ui_MainWindow):
     def control(self):
         if self.pushButton_15.text() == '暂停':
             self.pushButton_15.setText("继续")
-            self.control_msg = "pause"
+            self.control_msg = {
+                "command": "pause"
+            }
         elif self.pushButton_15.text() == '继续':
             self.pushButton_15.setText("暂停")
-            self.control_msg = "resume"
+            self.control_msg = {
+                "command": "resume"
+            }
 
     def changeDevice(self):
         item = self.listWidget.currentItem()
         self.currentDevice = item.text()
         print(item.text())
+
+    def setInterval(self):
+        text, ret = QInputDialog.getText(self, "输入", "请输入间隔值:", QLineEdit.Normal, "")
+        if ret and text != '':
+            self.control_msg = {
+                "command": "setInterval",
+                "value": text
+            }
 
     def listen(self):
         self.HOST = self.lineEdit_2.text()
@@ -81,16 +89,13 @@ class Server_Win(QMainWindow, Ui_MainWindow):
             if len(data) > 0:
                 packet = HEMSProtocol.unserilize(data)
                 print(packet)
-                # body = re.split("(?<=})", str(packet['body']))[:-1]
-                # for item in body:
-                #     message = json.loads(item)
                 message = packet['body']
                 if self.currentDevice == str(addr):
                     self.label_6.setText(f"{message['power']:.2f}w")
                     self.label_2.setText(str(message['sn']))
                 filename = f"{message['sn']}.csv"
                 if not os.path.exists(filename):
-                    df = pd.DataFrame(columns=['id','time', 'power', 'sn', 'state'])
+                    df = pd.DataFrame(columns=['id', 'time', 'power', 'sn', 'state'])
                     df.to_csv(f"{message['sn']}.csv")
                 df = pd.read_csv(filename, index_col=0)
                 df = df.append(pd.Series(
@@ -99,8 +104,8 @@ class Server_Win(QMainWindow, Ui_MainWindow):
 
                 csv_path = f"{message['sn']}.csv"
                 df.to_csv(csv_path)
-                self.plot(csv_path)
                 if self.currentDevice == str(addr):
+                    self.plot(csv_path)
                     self.updateImage(f"{message['sn']}.png")
             else:
                 conn.close()
@@ -111,17 +116,17 @@ class Server_Win(QMainWindow, Ui_MainWindow):
         while True:
             if self.currentDevice == str(addr):
                 if self.control_msg:
-                    packet = HEMSProtocol(type="control", method=self.control_msg)
+                    packet = HEMSProtocol(type="control", control_msg=self.control_msg)
                     conn_socket.sendall(packet.serilize())
                     self.control_msg = None
 
     def plot(self, csv_path):
         df = pd.read_csv(csv_path, index_col=0)
         y = df['power'][-30:]
-        plt.plot(y, "b-")
+        fig, ax = plt.subplots()
+        ax.plot(y, "b-")
         plt.ylabel("power")
-        plt.ylim(900, 1100)
-        plt.savefig(f"{df.sn.iloc[0]}.png")
+        fig.savefig(f"{df.sn.iloc[0]}.png")
         plt.close()
 
 

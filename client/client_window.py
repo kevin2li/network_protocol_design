@@ -1,4 +1,3 @@
-import json
 import random
 import socket
 import sys
@@ -6,9 +5,7 @@ import threading
 import time
 import traceback
 from datetime import datetime
-
 from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
-
 from client.client_qt import Ui_Form
 from protocol import HEMSProtocol
 
@@ -24,9 +21,11 @@ class Client_Win(QWidget, Ui_Form):
         self.device = 'ABC'
         self.state = "off"
         self.interval = 1
+        self.min = 200
+        self.max = 210
         self.show()
 
-    def send(self, conn_socket, interval, device):
+    def send(self, conn_socket):
         id = 0
         try:
             while True:
@@ -35,15 +34,14 @@ class Client_Win(QWidget, Ui_Form):
                     message = {
                         "type": "data",
                         "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "power": 1000 + random.random()*10,
+                        "power": self.min + random.random()*(self.max - self.min),
                         "id": id,
-                        "sn": device,
+                        "sn": self.device,
                         "state": self.state
                     }
                     packet = HEMSProtocol(**message)
-                    # print(json.dumps(message))
                     conn_socket.sendall(packet.serilize())
-                    time.sleep(interval)
+                    time.sleep(self.interval)
                 elif self.FLAG == -1:
                     self.FLAG = 0
                     break
@@ -59,16 +57,19 @@ class Client_Win(QWidget, Ui_Form):
                 data = conn_socket.recv(1024)
                 data = HEMSProtocol.unserilize(data)
                 print(data)
-                command = data['body']['method']
-                if command == 'pause':
+                control_msg = data['body']['control_msg']
+                if control_msg['command'] == 'pause':
                     self.btn.setText("启动")
                     self.FLAG = 0
-                elif command == 'resume':
+                elif control_msg['command'] == 'resume':
                     self.btn.setText("停止")
                     self.FLAG = 1
-                elif command == 'stop':
+                elif control_msg['command'] == 'stop':
                     self.btn.setText("启动")
                     self.FLAG = -1
+                elif control_msg['command'] == 'setInterval':
+                    self.interval = float(control_msg['value'])
+
         except ConnectionAbortedError:
             print("ConnectionAbortedError")
 
@@ -81,6 +82,8 @@ class Client_Win(QWidget, Ui_Form):
                     self.port = int(self.lineEdit_2.text())
                     self.interval = float(self.lineEdit_3.text())
                     self.device = self.lineEdit_4.text()
+                    self.min = float(self.lineEdit_5.text())
+                    self.max = float(self.lineEdit_6.text())
                 except Exception as e:
                     traceback.print_exc()
                     QMessageBox.information(self, '提示', '对不起，输入有误， 请检查')
@@ -88,7 +91,7 @@ class Client_Win(QWidget, Ui_Form):
                     conn_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     conn_socket.connect((self.addr, self.port))
 
-                    threading.Thread(target=self.send, args=(conn_socket, self.interval, self.device), daemon=True).start()
+                    threading.Thread(target=self.send, args=(conn_socket,), daemon=True).start()
                     threading.Thread(target=self.listen, args=(conn_socket, ), daemon=True).start()
                 except ConnectionRefusedError as e:
                     traceback.print_exc()

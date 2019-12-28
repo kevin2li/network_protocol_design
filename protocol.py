@@ -2,7 +2,7 @@ import pickle
 
 
 class HEMSProtocol:
-    def __init__(self, type, id=None, sn=None, power=None, state=None, time=None, method=None):
+    def __init__(self, type, id=None, sn=None, power=None, state=None, time=None, control_msg=None):
         # 消息头
         self.header = {
             "type": type
@@ -18,9 +18,9 @@ class HEMSProtocol:
             }
         elif self.header['type'] == 'control':
             self.body = {
-                "method": method
+                "control_msg": control_msg
             }
-    
+
     def serilize(self):
         return pickle.dumps({
             "header": self.header,
