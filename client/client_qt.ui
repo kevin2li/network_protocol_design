@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>518</width>
-    <height>276</height>
+    <height>322</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>ABC</string>
+    <string>DNPLK11FNK</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -93,7 +93,7 @@
     </font>
    </property>
    <property name="text">
-    <string>设备名：</string>
+    <string>设备序列号：</string>
    </property>
    <property name="textFormat">
     <enum>Qt::AutoText</enum>
@@ -195,7 +195,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>220</y>
+     <y>270</y>
      <width>141</width>
      <height>31</height>
     </rect>
@@ -220,7 +220,7 @@
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>220</y>
+     <y>270</y>
      <width>41</width>
      <height>31</height>
     </rect>
@@ -233,7 +233,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>220</y>
+     <y>270</y>
      <width>31</width>
      <height>31</height>
     </rect>
@@ -258,13 +258,51 @@
    <property name="geometry">
     <rect>
      <x>230</x>
-     <y>220</y>
+     <y>270</y>
      <width>41</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>210</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>220</y>
+     <width>141</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial Black</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>设备编号：</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::AutoText</enum>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_7">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>220</y>
+     <width>41</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>1001</string>
    </property>
   </widget>
  </widget>

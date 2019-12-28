@@ -1,4 +1,6 @@
 # network_protocol_design
+## protocol
+protocol.py: 简单的协议设计，包含协议格式、序列化、反序列化等
 ## client
    1. client_qt.ui: 由"qt designer"设计的xml格式的ui文件
    2. client_qt.py: 由client_qt.ui转换来的对应的.py文件

@@ -9,7 +9,12 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
 from client.client_qt import Ui_Form
 from protocol import HEMSProtocol
 
-
+'''
+FLAG:   0  --> 初始化
+        1  --> 正常
+        2  --> 暂停
+        -1 --> 关闭
+'''
 class Client_Win(QWidget, Ui_Form):
     def __init__(self):
         super(Client_Win, self).__init__()
@@ -18,24 +23,23 @@ class Client_Win(QWidget, Ui_Form):
         self.FLAG = 0
         self.addr = '127.0.0.1'
         self.port = 8023
-        self.device = 'ABC'
+        self.device = None
         self.state = "off"
+        self.id = 1001
         self.interval = 1
         self.min = 200
         self.max = 210
         self.show()
 
     def send(self, conn_socket):
-        id = 0
         try:
             while True:
                 if self.FLAG == 1:
-                    id += 1
                     message = {
                         "type": "data",
                         "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                         "power": self.min + random.random()*(self.max - self.min),
-                        "id": id,
+                        "id": self.id,
                         "sn": self.device,
                         "state": self.state
                     }
@@ -57,7 +61,7 @@ class Client_Win(QWidget, Ui_Form):
                 data = conn_socket.recv(1024)
                 data = HEMSProtocol.unserilize(data)
                 print(data)
-                control_msg = data['body']['control_msg']
+                control_msg = data['body']
                 if control_msg['command'] == 'pause':
                     self.btn.setText("启动")
                     self.FLAG = 0
@@ -82,9 +86,10 @@ class Client_Win(QWidget, Ui_Form):
                     self.port = int(self.lineEdit_2.text())
                     self.interval = float(self.lineEdit_3.text())
                     self.device = self.lineEdit_4.text()
+                    self.id = self.lineEdit_7.text()
                     self.min = float(self.lineEdit_5.text())
                     self.max = float(self.lineEdit_6.text())
-                except Exception as e:
+                except Exception:
                     traceback.print_exc()
                     QMessageBox.information(self, '提示', '对不起，输入有误， 请检查')
                 try:
@@ -93,7 +98,7 @@ class Client_Win(QWidget, Ui_Form):
 
                     threading.Thread(target=self.send, args=(conn_socket,), daemon=True).start()
                     threading.Thread(target=self.listen, args=(conn_socket, ), daemon=True).start()
-                except ConnectionRefusedError as e:
+                except ConnectionRefusedError:
                     traceback.print_exc()
                     QMessageBox.information(self, '提示', '对不起，连接被拒绝')
 

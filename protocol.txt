@@ -11,9 +11,6 @@ power:检测到的瞬时电功率
 state:设备的开关状态
 time:对应的电功率的时间，格式为:YYYY-MM-DD hh:mm:ss,即:年月日时分秒
 
-协议设计：
-type(2), id(4), sn(10), power(4), state(2), time(8)
-00 1001 DNPLK11FNK 1200 1
 config:
 {
   "ip" : "127.0.0.1",

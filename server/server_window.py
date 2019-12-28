@@ -116,7 +116,7 @@ class Server_Win(QMainWindow, Ui_MainWindow):
         while True:
             if self.currentDevice == str(addr):
                 if self.control_msg:
-                    packet = HEMSProtocol(type="control", control_msg=self.control_msg)
+                    packet = HEMSProtocol(type="control", **self.control_msg)
                     conn_socket.sendall(packet.serilize())
                     self.control_msg = None
 
