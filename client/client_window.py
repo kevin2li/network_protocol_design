@@ -13,7 +13,7 @@ from protocol import HEMSProtocol
 FLAG:   0  --> 初始化
         1  --> 正常
         2  --> 暂停
-        -1 --> 关闭
+       -1  --> 关闭
 '''
 class Client_Win(QWidget, Ui_Form):
     def __init__(self):
@@ -73,7 +73,6 @@ class Client_Win(QWidget, Ui_Form):
                     self.FLAG = -1
                 elif control_msg['command'] == 'setInterval':
                     self.interval = float(control_msg['value'])
-
         except ConnectionAbortedError:
             print("ConnectionAbortedError")
 

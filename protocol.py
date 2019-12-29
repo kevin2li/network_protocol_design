@@ -1,6 +1,4 @@
 import pickle
-
-
 class HEMSProtocol:
     def __init__(self, type, id=None, sn=None, power=None, state=None, time=None, command=None, value=None):
         # 消息头
@@ -8,7 +6,8 @@ class HEMSProtocol:
             "type": type
         }
         # 消息体
-        if self.header['type'] == 'data':
+        type = self.header["type"]
+        if type == 'data':
             self.body = {
                 "id": id,
                 "sn": sn,
@@ -16,7 +15,7 @@ class HEMSProtocol:
                 "state": state,
                 "time": time
             }
-        elif self.header['type'] == 'control':
+        elif type == 'control':
             self.body = {
                 "command": command,
                 "value": value

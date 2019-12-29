@@ -108,7 +108,6 @@ class Server_Win(QMainWindow, Ui_MainWindow):
                     self.plot(csv_path)
                     self.updateImage(f"{message['sn']}.png")
             else:
-                conn.close()
                 break
         conn.close()
 
