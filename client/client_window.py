@@ -103,12 +103,15 @@ class Client_Win(QWidget, Ui_Form):
 
                 self.btn.setText("停止")
                 self.FLAG = 1
+            elif self.FLAG == 2:
+                self.FLAG = 1
+                self.btn.setText("停止")
             else:
                 self.FLAG = -1
                 self.btn.setText("停止")
         elif self.btn.text() == "停止":
             self.state = 'off'
-            self.FLAG = -1
+            self.FLAG = 2
             self.btn.setText("启动")
 
 
